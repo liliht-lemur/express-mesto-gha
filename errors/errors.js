@@ -13,12 +13,12 @@ const messageSuccess = {
   okMessage: 'Действие выполнено.',
 };
 const messageError = {
-  badDataError: 'Переданы несуществующие данные.',
+  badDataError: 'Переданы некорректные данные.',
   defaultError: 'Ошибка по умолчанию.',
   notFoundError: 'Данные по указанному _id не найдены.',
 };
 const handleErrors = (res, err) => {
-  if (err.name === 'ValidationError') {
+  if (err.name === 'ValidationError' || err.name === 'CastError') {
     res.status(codeError.BAD_REQUEST).send({ message: messageError.badDataError });
     return;
   }

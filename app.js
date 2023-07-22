@@ -11,7 +11,10 @@ const { PORT = 3000 } = process.env;
 
 const app = express();
 
-mongoose.connect('mongodb://localhost:27017/mestodb');
+// mongoose.connect('mongodb://localhost:27017/mestodb');
+mongoose.connect('mongodb+srv://liliht:bZSXtshTT3BoiQXR@mestodb.2bfwkjk.mongodb.net/?retryWrites=true&w=majority', {
+  useNewUrlParser: true,
+});
 
 app.use(bodyParser.json());
 

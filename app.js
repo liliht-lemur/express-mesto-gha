@@ -4,29 +4,33 @@ const bodyParser = require('body-parser');
 const usersRouter = require('./routes/users');
 const cardsRouter = require('./routes/cards');
 const {
-  codeError, messageError,
+  messageError,
 } = require('./errors/errors');
+const NotFoundError = require('./errors/NotFoundError');
+const auth = require('./middlewares/auth');
+const { createUser, login } = require('./controllers/users');
+const { errors } = require('celebrate');
+const centralizedErrorHandler = require('./middlewares/errors');
+const {
+  validationCreateUser,
+  validationLogin,
+} = require('./middlewares/validations');
 
 const { PORT = 3000 } = process.env;
 
 const app = express();
 
-// mongoose.connect('mongodb://localhost:27017/mestodb');
-mongoose.connect('mongodb+srv://liliht:bZSXtshTT3BoiQXR@mestodb.2bfwkjk.mongodb.net/?retryWrites=true&w=majority', {
-  useNewUrlParser: true,
-});
+mongoose.connect('mongodb://localhost:27017/mestodb');
 
 app.use(bodyParser.json());
 
+app.post('/signin', validationLogin, login);
+app.post('/signup', validationCreateUser, createUser);
+app.use('/users', auth, usersRouter);
+app.use('/cards', auth, cardsRouter);
 app.use((req, res, next) => {
-  req.user = {
-    _id: '64a98226eb087e92e5e63303',
-  };
-
-  next();
+  next(new NotFoundError(messageError.notFoundError));
 });
-app.use('/users', usersRouter);
-app.use('/cards', cardsRouter);
-app.use('/', (req, res) => res.status(codeError.NOT_FOUND).send({ message: messageError.notFoundError }));
-
+app.use(errors()); // обработчик ошибок celebrate
+app.use(centralizedErrorHandler); // централизованный обработчик ошибок
 app.listen(PORT, () => console.log('Server started'));

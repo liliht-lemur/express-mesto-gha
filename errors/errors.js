@@ -8,6 +8,9 @@ const codeError = {
   BAD_REQUEST: 400,
   SERVER_ERROR: 500,
   NOT_FOUND: 404,
+  UNAUTHORIZED: 401,
+  CONFLICT: 409,
+  FORBIDDEN: 403,
 };
 const messageSuccess = {
   okMessage: 'Действие выполнено.',
@@ -16,15 +19,11 @@ const messageError = {
   badDataError: 'Переданы некорректные данные.',
   defaultError: 'Ошибка по умолчанию.',
   notFoundError: 'Данные по указанному _id не найдены.',
-};
-const handleErrors = (res, err) => {
-  if (err.name === 'ValidationError' || err.name === 'CastError') {
-    res.status(codeError.BAD_REQUEST).send({ message: messageError.badDataError });
-    return;
-  }
-  res.status(codeError.SERVER_ERROR).send({ message: messageError.defaultError });
+  unauthorized: 'Ошибка авторизации',
+  conflictMessage: 'Пользователь с указанными данными уже существует',
+  forbiddenMessage: 'Отсутствует доступ',
 };
 
 module.exports = {
-  codeSuccess, codeCreated, codeError, messageSuccess, messageError, handleErrors,
+  codeSuccess, codeCreated, codeError, messageSuccess, messageError,
 };

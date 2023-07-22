@@ -1,36 +1,45 @@
 const Card = require('../models/card');
 const {
-  codeSuccess, codeCreated, codeError, messageSuccess, messageError, handleErrors,
+  codeSuccess, codeCreated, messageError, messageSuccess,
 } = require('../errors/errors');
+const NotFoundError = require('../errors/NotFoundError');
+const ForbiddenError = require('../errors/ForbiddenError');
 
-const getCards = (req, res) => {
+const getCards = (req, res, next) => {
   Card.find({})
     .then((cards) => res.status(codeSuccess.OK).send(cards))
-    .catch(() => res.status(codeError.SERVER_ERROR).send({ message: messageError.defaultError }));
+    .catch(next);
 };
 
-const createCard = (req, res) => {
+const createCard = (req, res, next) => {
   const { name, link } = req.body;
   const owner = req.user._id;
 
   Card.create({ name, link, owner })
     .then((card) => res.status(codeCreated.OK).send(card))
-    .catch((err) => handleErrors(res, err));
+    .catch(next);
 };
 
-const deleteCard = (req, res) => {
-  Card.findByIdAndDelete(req.params.cardId)
+const deleteCard = (req, res, next) => {
+  Card.findById(req.params.cardId)
     .then((card) => {
       if (!card) {
-        res.status(codeError.NOT_FOUND).send({ message: messageError.notFoundError });
+        throw new NotFoundError(messageError.notFoundError);
+      }
+      if (card.owner.toString() !== req.user._id) {
+        throw new ForbiddenError(messageError.forbiddenMessage);
       } else {
-        res.send({ message: messageSuccess.okMessage });
+        Card.deleteOne(card)
+          .then(() => {
+            res.send({ message: messageSuccess.okMessage });
+          })
+          .catch(next);
       }
     })
-    .catch((err) => handleErrors(res, err));
+    .catch(next);
 };
 
-const likeCard = (req, res) => {
+const likeCard = (req, res, next) => {
   Card.findByIdAndUpdate(
     req.params.cardId,
     { $addToSet: { likes: req.user._id } },
@@ -38,15 +47,15 @@ const likeCard = (req, res) => {
   )
     .then((card) => {
       if (!card) {
-        res.status(codeError.NOT_FOUND).send({ message: messageError.notFoundError });
+        throw new NotFoundError(messageError.notFoundError);
       } else {
         res.send(card);
       }
     })
-    .catch((err) => handleErrors(res, err));
+    .catch(next);
 };
 
-const dislikeCard = (req, res) => {
+const dislikeCard = (req, res, next) => {
   Card.findByIdAndUpdate(
     req.params.cardId,
     { $pull: { likes: req.user._id } },
@@ -54,12 +63,12 @@ const dislikeCard = (req, res) => {
   )
     .then((card) => {
       if (!card) {
-        res.status(codeError.NOT_FOUND).send({ message: messageError.notFoundError });
+        throw new NotFoundError(messageError.notFoundError);
       } else {
         res.send(card);
       }
     })
-    .catch((err) => handleErrors(res, err));
+    .catch(next);
 };
 
 module.exports = {

@@ -1,9 +1,9 @@
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 const {
   codeSuccess, codeCreated, messageError,
 } = require('../errors/errors');
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
 const NotFoundError = require('../errors/NotFoundError');
 
 const getUsers = (req, res, next) => {

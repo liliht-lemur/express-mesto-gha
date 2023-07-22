@@ -1,4 +1,5 @@
 const express = require('express');
+const { errors } = require('celebrate');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const usersRouter = require('./routes/users');
@@ -9,7 +10,6 @@ const {
 const NotFoundError = require('./errors/NotFoundError');
 const auth = require('./middlewares/auth');
 const { createUser, login } = require('./controllers/users');
-const { errors } = require('celebrate');
 const centralizedErrorHandler = require('./middlewares/errors');
 const {
   validationCreateUser,

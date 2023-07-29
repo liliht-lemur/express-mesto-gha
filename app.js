@@ -22,8 +22,6 @@ const { PORT = 3000, DB_URL = 'mongodb://127.0.0.1:27017/mestodb' } = process.en
 
 const app = express();
 const allowedCors = [
-  'https://api.liliht.nomoredomains.sbs',
-  'http://api.liliht.nomoredomains.sbs',
   'https://liliht.nomoredomains.sbs',
   'http://liliht.nomoredomains.sbs',
   'localhost:3000',
@@ -38,14 +36,15 @@ app.use((req, res, next) => {
   if (method === 'OPTIONS') {
     res.header('Access-Control-Allow-Methods', DEFAULT_ALLOWED_METHODS);
     res.header('Access-Control-Allow-Headers', requestHeaders);
+
+    return res.end();
   }
 
   if (allowedCors.includes(origin)) {
     res.header('Access-Control-Allow-Origin', origin);
   }
-  res.header('Access-Control-Allow-Origin', '*');
+  // res.header('Access-Control-Allow-Origin', '*');
   next();
-  return res.end();
 });
 
 mongoose.connect(DB_URL);

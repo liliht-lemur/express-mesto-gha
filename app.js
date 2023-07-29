@@ -18,7 +18,7 @@ const {
 
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 
-const { PORT = 3000, DB_URL = 'mongodb://127.0.0.1:27017/mestodb' } = process.env;
+const { PORT = 3000, DB_URL = 'mongodb+srv://liliht:bZSXtshTT3BoiQXR@mestodb.2bfwkjk.mongodb.net/?retryWrites=true&w=majority' } = process.env;
 
 const app = express();
 const allowedCors = [
@@ -43,8 +43,9 @@ app.use((req, res, next) => {
   if (allowedCors.includes(origin)) {
     res.header('Access-Control-Allow-Origin', origin);
   }
+
   // res.header('Access-Control-Allow-Origin', '*');
-  next();
+  return next();
 });
 
 mongoose.connect(DB_URL);

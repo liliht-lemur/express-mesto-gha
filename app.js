@@ -16,6 +16,8 @@ const {
   validationLogin,
 } = require('./middlewares/validations');
 
+const { requestLogger, errorLogger } = require('./middlewares/logger');
+
 const { PORT = 3000, DB_URL = 'mongodb://127.0.0.1:27017/mestodb' } = process.env;
 
 const app = express();
@@ -24,6 +26,7 @@ mongoose.connect(DB_URL);
 
 app.use(bodyParser.json());
 
+app.use(requestLogger);
 app.post('/signin', validationLogin, login);
 app.post('/signup', validationCreateUser, createUser);
 app.use('/users', auth, usersRouter);
@@ -31,6 +34,7 @@ app.use('/cards', auth, cardsRouter);
 app.use((req, res, next) => {
   next(new NotFoundError(messageError.notFoundError));
 });
+app.use(errorLogger);
 app.use(errors()); // обработчик ошибок celebrate
 app.use(centralizedErrorHandler); // централизованный обработчик ошибок
 app.listen(PORT, () => console.log('Server started'));

@@ -40,6 +40,8 @@ app.use((req, res, next) => {
     return res.end();
   }
 
+  res.header('Access-Control-Allow-Origin', origin);
+
   if (allowedCors.includes(origin)) {
     res.header('Access-Control-Allow-Origin', origin);
   }

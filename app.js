@@ -18,7 +18,7 @@ const {
 
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 
-const { PORT = 3000, DB_URL = 'mongodb+srv://liliht:bZSXtshTT3BoiQXR@mestodb.2bfwkjk.mongodb.net/?retryWrites=true&w=majority' } = process.env;
+const { PORT = 3000, DB_URL = 'mongodb://localhost:27017/mestodb' } = process.env;
 
 const app = express();
 const allowedCors = [
